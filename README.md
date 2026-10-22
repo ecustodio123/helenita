@@ -4,15 +4,17 @@ Tienda independiente en React + Vite que consume `@ecustodio123/kafka-commerce` 
 
 ## Instalación privada
 
-El `.npmrc` del proyecto dirige únicamente el scope `@ecustodio123` a GitHub Packages. La autenticación se hereda del `.npmrc` de usuario (`~/.npmrc`), que ya permitió instalar y consultar el paquete en este equipo. No se copió su token al proyecto.
+El `.npmrc` del proyecto dirige únicamente el scope `@ecustodio123` a GitHub Packages y referencia `${GITHUB_PACKAGES_TOKEN}` para autenticar. El valor del token no se guarda en el repositorio.
 
-En otro equipo configura un token personal de GitHub con acceso al paquete y permiso `read:packages` mediante una variable de entorno privada `GITHUB_PACKAGES_TOKEN`. Agrega esta referencia a tu **`~/.npmrc` de usuario**, fuera del repositorio:
+Configura un token personal de GitHub (classic) con acceso al paquete y permiso `read:packages` mediante la variable de entorno privada `GITHUB_PACKAGES_TOKEN`. El proyecto ya contiene esta referencia, sin su valor:
 
 ```ini
 //npm.pkg.github.com/:_authToken=${GITHUB_PACKAGES_TOKEN}
 ```
 
-Exporta esa variable de forma segura en tu sesión o gestor de secretos antes de ejecutar `npm ci`. No la guardes en `.env.local`: npm no carga ese archivo. Tampoco uses el prefijo `VITE_` para tokens privados. El `NPM_TOKEN` presente en el entorno de este equipo no autentica contra GitHub Packages; la configuración de usuario existente sí.
+Exporta esa variable de forma segura en tu sesión o gestor de secretos antes de ejecutar `npm ci`. npm no carga `.env` ni `.env.local` automáticamente. Tampoco uses el prefijo `VITE_` para tokens privados.
+
+En Cloudflare Pages, configura el secreto `GITHUB_PACKAGES_TOKEN` en el entorno de compilación de Production (y Preview si lo usas). El nombre debe coincidir exactamente con `.npmrc`. Usa `npm run build` como comando y `dist` como directorio de salida. La autenticación se necesita durante la instalación automática de dependencias, antes del comando de build. Tras subir esta configuración, inicia una nueva compilación del commit actualizado.
 
 ## Configuración
 
